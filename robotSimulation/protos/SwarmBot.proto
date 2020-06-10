@@ -1,0 +1,21 @@
+PROTO SwarmBot [
+  field SFVec3f    scale  0.2 0.2 0.2
+
+]
+{
+
+  E-puck {
+    scale IS scale
+    turretSlot [
+      Solid {
+        translation 0 0.01 0
+        scale IS scale
+        children [
+          MultiSenseS21 {
+          }
+        ]
+      }
+    ]
+  }
+
+}

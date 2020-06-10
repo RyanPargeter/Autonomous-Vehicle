@@ -1,0 +1,160 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+  info [
+    "Pedestrian Simulation"
+  ]
+  title "Autonomous Vehicle"
+  ERP 0.6
+  basicTimeStep 10
+  lineScale 1
+  contactProperties [
+    ContactProperties {
+      softCFM 0.0003
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.011844905023391963 -0.9832346795829731 -0.18195950948042086 3.327405504909319
+  position -0.3621975354358121 3.627403994796349 -8.909534704586946
+  near 1
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+CircleArena {
+  radius 10
+  floorAppearance Parquetry {
+  }
+  floorTileSize 2 2
+  wallThickness 0.1
+  wallHeight 1
+}
+Pedestrian {
+  translation 0 1.26 3
+  rotation 0 1 0 3.14159
+  controllerArgs "--trajectory=\"0 3, 0 -3\" --speed=2.5"
+}
+Pedestrian {
+  translation 5 1.27 1
+  rotation 0 1 0 3.14159
+  name "pedestrian(1)"
+  controllerArgs "--trajectory=\"5 1, 5 -1, 1 -5, -1 -5, -5 -1, -5 1, -1 5, 1 5\""
+  shirtColor 0.466667 0.0980392 0.458824
+}
+Pedestrian {
+  translation 6 1.27 2
+  rotation 0 1 0 3.14159
+  name "pedestrian(2)"
+  shirtColor 0.6 0.4 0.35
+  pantsColor 0.18 0.18 0.23
+}
+Robot {
+  translation 0 0.87 0
+  scale 13 13 13
+  children [
+    DEF BODY Shape {
+      appearance Pcb {
+      }
+      geometry Box {
+        size 0.1 0.04 0.22
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor -0.06 0 -0.063
+      }
+      device [
+        RotationalMotor {
+        }
+      ]
+      endPoint DEF WHEEL1 Solid {
+        translation -0.06 0 -0.063
+        rotation 0 0 1 1.5708003061004252
+        children [
+          DEF WHEEL Shape {
+            appearance Asphalt {
+            }
+            geometry Cylinder {
+              height 0.01
+              radius 0.05
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0.06 0 -0.063
+      }
+      device [
+        RotationalMotor {
+        }
+      ]
+      endPoint DEF WHEEL2 Solid {
+        translation 0.06 0 -0.063
+        rotation 0 0 1 1.5707996938995747
+        children [
+          USE WHEEL
+        ]
+        name "solid(1)"
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0.06 0 0.082
+      }
+      device [
+        RotationalMotor {
+        }
+      ]
+      endPoint DEF WHEEL3 Solid {
+        translation 0.06 0 0.082
+        rotation 0 0 1 1.5707996938995747
+        children [
+          USE WHEEL
+        ]
+        name "solid(2)"
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor -0.06 0 0.082
+      }
+      device [
+        RotationalMotor {
+        }
+      ]
+      endPoint DEF WHEEL3 Solid {
+        translation -0.06 0 0.082
+        rotation 0 0 1 1.5707996938995747
+        children [
+          USE WHEEL
+        ]
+        name "solid(3)"
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+    Camera {
+      translation 0 0.03 -0.09
+      scale 0.3 0.3 0.3
+      children [
+        DEF STEREO MultiSenseS21 {
+        }
+      ]
+      physics Physics {
+      }
+    }
+  ]
+  boundingObject USE BODY
+  physics Physics {
+  }
+}
