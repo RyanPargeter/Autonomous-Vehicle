@@ -7,8 +7,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.05675207471094132 0.9958252631746558 0.07149298734233593 4.001646307344597
-  position -9.739493931824054 2.6803380456415047 -8.238513325150121
+  orientation -0.44590985607090466 -0.8938626968570687 0.046624879905834235 0.6707414862550406
+  position -0.7029141105629152 1.203063850413991 -2.0036595791087777
 }
 TexturedBackground {
 }
@@ -18,8 +18,8 @@ RectangleArena {
   floorSize 13 19
 }
 Robot {
-  translation 0.247187 0 -2.05773
-  rotation 0 1 0 2.30899
+  translation 0.955747 0 -4.27741
+  rotation 0 1 0 2.83258
   scale 10 10 10
   children [
     Transform {
@@ -53,7 +53,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.045 0.025 0
-        rotation 1 0 0 4.98467
+        rotation 1 0 0 4.984670000000001
         children [
           DEF WHEEL Transform {
             rotation 0 0 1 1.57
@@ -94,8 +94,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.045 0.025 0
-        rotation 1 0 0 4.58735
+        translation 0.044999999999999984 0.025 0
+        rotation 0.9999999999999999 0 0 4.587350000000001
         children [
           USE WHEEL
         ]
@@ -106,7 +106,7 @@ Robot {
     }
     DEF LEFT_SENSOR DistanceSensor {
       translation -0.02 0.063 -0.042
-      rotation 0 1 0 2.07
+      rotation 0 -1 0 -1.8082053071795858
       children [
         DEF SENSOR Transform {
           rotation 0 0 1 1.57
@@ -136,17 +136,16 @@ Robot {
     }
     DEF LEFT_CAMERA Camera {
       translation -0.02 0.063 -0.042
-      rotation 0 1 0 0.5
       name "camera0"
       fieldOfView 1.047
-      width 240
-      height 180
+      width 640
+      height 480
       recognition Recognition {
       }
     }
     DEF RIGHT_SENSOR DistanceSensor {
       translation 0.02 0.063 -0.042
-      rotation 0 1 0 1.07
+      rotation 0 1 0 1.5936
       children [
         USE SENSOR
       ]
@@ -161,11 +160,10 @@ Robot {
     }
     DEF RIGHT_CAMERA Camera {
       translation 0.02 0.063 -0.042
-      rotation 0 1 0 -0.5
       name "camera1"
       fieldOfView 1.047
-      width 240
-      height 180
+      width 640
+      height 480
     }
     Shape {
       appearance PBRAppearance {
@@ -224,6 +222,7 @@ Robot {
 }
 Pedestrian {
   translation 0 1.27 2.06
+  rotation 0 1 0 2.8798
 }
 Solid {
 }
