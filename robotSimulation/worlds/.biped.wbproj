@@ -9,5 +9,5 @@ viewpointLocked: 0
 orthographicViewHeight: 1
 textFiles: 0 "controllers/auto_robot/auto_robot.py"
 globalOptionalRendering: DistanceSensorRays
+renderingDevicePerspectives: MyBot:camera1;1;0.26875;0.259574;0
 renderingDevicePerspectives: MyBot:camera0;1;0.272917;0;0
-renderingDevicePerspectives: MyBot:camera1;1;0.26875;0.807735;0

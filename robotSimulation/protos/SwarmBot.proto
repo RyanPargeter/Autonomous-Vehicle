@@ -1,21 +1,213 @@
 PROTO SwarmBot [
-  field SFVec3f    scale  0.2 0.2 0.2
+  field SFVec3f    scale  1 1 1
+  field SFVec3f    translation 0 0 0
+  field SFRotation    rotation 0 0 0 0
 
 ]
 {
-
-  E-puck {
+  Robot {
+    translation IS translation
+    rotation IS rotation
     scale IS scale
-    turretSlot [
-      Solid {
-        translation 0 0.01 0
-        scale IS scale
+    children [
+      Transform {
+        translation 0 0.0415 0
         children [
-          MultiSenseS21 {
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.0820075 0.364731 0.8
+              roughness 1
+              metalness 0
+            }
+            geometry DEF BODY Cylinder {
+              height 0.08
+              radius 0.045
+            }
           }
         ]
       }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis -1 0 0
+          anchor 0 0.025 0
+        }
+        device [
+          RotationalMotor {
+            name "left wheel motor"
+          }
+          PositionSensor {
+            name "left wheel sensor"
+          }
+        ]
+        endPoint Solid {
+          translation -0.045 0.025 0
+          rotation 1 0 0 4.984670000000001
+          children [
+            DEF WHEEL Transform {
+              rotation 0 0 1 1.57
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 1 0 0
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Cylinder {
+                    height 0.01
+                    radius 0.025
+                  }
+                }
+              ]
+            }
+          ]
+          name "left wheel"
+          boundingObject USE WHEEL
+          physics DEF PHYSICS_WHEEL Physics {
+            density -1
+            mass 0.05
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis -1 0 0
+          anchor 0 0.025 0
+        }
+        device [
+          RotationalMotor {
+            name "right wheel motor"
+          }
+          PositionSensor {
+            name "right wheel sensor"
+          }
+        ]
+        endPoint Solid {
+          translation 0.044999999999999984 0.025 0
+          rotation 0.9999999999999999 0 0 4.587350000000001
+          children [
+            USE WHEEL
+          ]
+          name "right wheel"
+          boundingObject USE WHEEL
+          physics USE PHYSICS_WHEEL
+        }
+      }
+      DEF LEFT_SENSOR DistanceSensor {
+        translation -0.02 0.063 -0.042
+        rotation 0 -1 0 -1.8082053071795858
+        children [
+          DEF SENSOR Transform {
+            rotation 0 0 1 1.57
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor 0.975691 0.981481 0.0252992
+                  roughness 1
+                  metalness 0
+                }
+                geometry Cylinder {
+                  height 0.004
+                  radius 0.008
+                }
+              }
+            ]
+          }
+        ]
+        name "ds0"
+        lookupTable [
+          0 1024 0
+          0.05 1024 0
+          0.15 0 0
+        ]
+        numberOfRays 2
+        aperture 1
+      }
+      DEF LEFT_CAMERA Camera {
+        translation -0.02 0.063 -0.042
+        name "camera0"
+        fieldOfView 1.047
+        width 640
+        height 480
+        recognition Recognition {
+        }
+      }
+      DEF RIGHT_SENSOR DistanceSensor {
+        translation 0.02 0.063 -0.042
+        rotation 0 1 0 1.5936
+        children [
+          USE SENSOR
+        ]
+        name "ds1"
+        lookupTable [
+          0 1024 0
+          0.05 1024 0
+          0.15 0 0
+        ]
+        numberOfRays 2
+        aperture 1
+      }
+      DEF RIGHT_CAMERA Camera {
+        translation 0.02 0.063 -0.042
+        name "camera1"
+        fieldOfView 1.047
+        width 640
+        height 480
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.8 0.8 0.8
+          baseColorMap ImageTexture {
+            url [
+              "textures/mybot.png"
+            ]
+          }
+          roughness 0.5
+          metalness 0
+        }
+        geometry IndexedFaceSet {
+          coord Coordinate {
+            point [
+              0.015 0.038 -0.041
+              0.015 0.023 -0.041
+              0 0.023 -0.0455
+              -0.015 0.023 -0.041
+              -0.015 0.038 -0.041
+              0 0.038 -0.0455
+            ]
+          }
+          texCoord TextureCoordinate {
+            point [
+              0 0
+              0.5 0
+              1 0
+              1 1
+              0.5 1
+              0 1
+            ]
+          }
+          coordIndex [
+            0, 1, 2, 5, -1, 5, 2, 3, 4, -1
+          ]
+          texCoordIndex [
+            5, 0, 1, 4, -1, 4, 1, 2, 3, -1
+          ]
+          creaseAngle 0.9
+        }
+      }
     ]
+    name "MyBot"
+    boundingObject Transform {
+      translation 0 0.0415 0
+      children [
+        USE BODY
+      ]
+    }
+    physics Physics {
+      density -1
+      mass 0.5
+    }
+    controller "SLAM"
   }
+
 
 }
