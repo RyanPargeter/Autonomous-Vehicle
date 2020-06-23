@@ -7,8 +7,8 @@ centralWidgetVisible: 1
 selectionDisabled: 0
 viewpointLocked: 0
 orthographicViewHeight: 1
-textFiles: 0 "controllers/SLAM/SLAM.py"
-renderingDevicePerspectives: MyBot:camera0;1;0.2625;0;0
+textFiles: 1 "controllers/SLAM/SLAM.py" "controllers/auto_robot/auto_robot.py"
 renderingDevicePerspectives: laptop:display;1;0.179032;0;0
 renderingDevicePerspectives: MyBot:camera1;1;0.279688;0;0
 renderingDevicePerspectives: television:display;1;1;0;0
+renderingDevicePerspectives: MyBot:camera0;1;0.2625;0;0
