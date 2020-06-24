@@ -29,9 +29,11 @@ camera0 = robot.getCamera("camera0");
 camera1 = robot.getCamera("camera1");
 camera0.enable( 2 * timestep);
 camera1.enable( 2 * timestep);
+f = camera0.getFocalLength()
 
-cv2.startWindowThread()
-cv2.namedWindow("Frame")
+
+# cv2.startWindowThread()
+# cv2.namedWindow("Frame")
 
 
 count = 0;
@@ -46,22 +48,30 @@ while robot.step(timestep) != -1:
     leftCameraData = camera1.getImage();
     leftImage = np.frombuffer(leftCameraData, np.uint8).reshape((camera1.getHeight(), camera1.getWidth(), 4))
     leftImg = leftImage.copy()
-    leftRGBImage = leftImg[:,:,0:3]
+    leftRGBImage = leftImg[:,:,0:3].copy() 
     
     cameraData = camera0.getImage();
     image = np.frombuffer(cameraData, np.uint8).reshape((camera0.getHeight(), camera0.getWidth(), 4))
     img = image.copy()
     RGBImage = img[:,:,0:3]
     
-    frame0_new = cv2.cvtColor(leftRGBImage, cv2.COLOR_BGR2GRAY)
+    frame0_new = cv2.cvtColor(leftRGBImage, cv2.COLOR_BGR2GRAY).copy() 
     frame1_new = cv2.cvtColor(RGBImage, cv2.COLOR_BGR2GRAY)
 
     stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
     disparity = stereo.compute(frame0_new,frame1_new)
-
     
-    cv2.imshow('Frame', np.asarray(stereo))
-    cv2.waitKey(timestep)
+ 
+    h, w = frame0_new.shape[:2]
+    
+    sift = cv2.xfeatures2d.SIFT_create()
+    kp = sift.detect(frame0_new,None).copy() 
+    img=cv2.drawKeypoints(frame0_new,kp,leftRGBImage)
+    plt.imshow(img);
+    plt.show()
+    # cv2.imshow('Frame', disparity)
+    
+    # cv2.waitKey(timestep)
 
 cv2.destroyAllWindows()
     
