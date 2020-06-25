@@ -8,7 +8,7 @@ selectionDisabled: 0
 viewpointLocked: 0
 orthographicViewHeight: 1
 textFiles: 0 "controllers/SLAM/SLAM.py" "controllers/auto_robot/auto_robot.py"
+renderingDevicePerspectives: MyBot:camera1;1;0.279688;0;0
 renderingDevicePerspectives: laptop:display;0;0.179032;0;0
 renderingDevicePerspectives: MyBot:camera0;1;0.2625;0;0
-renderingDevicePerspectives: MyBot:camera1;1;0.279688;0;0
 renderingDevicePerspectives: television:display;0;1;0;0

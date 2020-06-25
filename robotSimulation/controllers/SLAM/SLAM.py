@@ -11,7 +11,8 @@ import time
 import cv2
 import os
 from matplotlib import pyplot as plt
-
+from scipy.spatial import distance    
+from sklearn.neighbors import KDTree 
 
 robot = Robot()
 
@@ -29,13 +30,12 @@ camera0 = robot.getCamera("camera0");
 camera1 = robot.getCamera("camera1");
 camera0.enable( 2 * timestep);
 camera1.enable( 2 * timestep);
-f = camera0.getFocalLength()
 
 
 # cv2.startWindowThread()
 # cv2.namedWindow("Frame")
-
-
+landmarks = {'initial_landmark' : [],
+            'next_frame_landmark' : []}
 count = 0;
 while robot.step(timestep) != -1:
   
@@ -48,30 +48,62 @@ while robot.step(timestep) != -1:
     leftCameraData = camera1.getImage();
     leftImage = np.frombuffer(leftCameraData, np.uint8).reshape((camera1.getHeight(), camera1.getWidth(), 4))
     leftImg = leftImage.copy()
-    leftRGBImage = leftImg[:,:,0:3].copy() 
+    leftRGBImage = leftImg[:,:,0:3].copy()
     
     cameraData = camera0.getImage();
     image = np.frombuffer(cameraData, np.uint8).reshape((camera0.getHeight(), camera0.getWidth(), 4))
     img = image.copy()
-    RGBImage = img[:,:,0:3]
+    RGBImage = img[:,:,0:3].copy()
     
-    frame0_new = cv2.cvtColor(leftRGBImage, cv2.COLOR_BGR2GRAY).copy() 
+    frame0_new = cv2.cvtColor(leftRGBImage, cv2.COLOR_BGR2GRAY) 
     frame1_new = cv2.cvtColor(RGBImage, cv2.COLOR_BGR2GRAY)
 
     stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
-    disparity = stereo.compute(frame0_new,frame1_new)
+    disparity = stereo.compute(frame1_new,frame0_new)
     
  
-    h, w = frame0_new.shape[:2]
     
     sift = cv2.xfeatures2d.SIFT_create()
     kp = sift.detect(frame0_new,None).copy() 
     img=cv2.drawKeypoints(frame0_new,kp,leftRGBImage)
-    plt.imshow(img);
-    plt.show()
-    # cv2.imshow('Frame', disparity)
+   
+    pts = [k.pt for k in kp]
+    realWorldSift = []
+    # if(len(pts) > 0):
+        # for point in range(len(pts)):
+            # y = int(pts[point][0])
+            # x = int(pts[point][1])
+            # Z = f*0.04/disparity[x,y]
+            # realWorldSift[0].append(x * Z / f)
+            # realWorldSift[1].append(y * Z / f)
+            # realWorldSift[2].append(Z)
+        
+    h, w = disparity.shape
+    f = 0.8*w                          # guess for focal length
+    Q = np.float32([[1, 0,  0, w / 2],
+                    [0, -1,  0,  h / 2],  # turn points 180 deg around x-axis,
+                    [0, 0, f,  0],  # so that y-axis looks up
+                    [0, 0,  0,  1]])
     
-    # cv2.waitKey(timestep)
+    real_points = cv2.reprojectImageTo3D(disparity, Q)
+    # mask = disparity > disparity.min()
+    # real_points = real_points[mask]
+    if len(pts) > 0:
+        if not(len(landmarks['initial_landmark']) > 0):
+            for i in range(len(pts)):
+                landmarks['initial_landmark'].append(real_points[int(pts[i][1]),int(pts[i][0])])
+        else:
+            for i in range(len(pts)):
+                landmarks['next_frame_landmark'].append(real_points[int(pts[i][1]),int(pts[i][0])])
+            nn_tree = KDTree(np.asarray(landmarks['initial_landmark']))
+            
+            nn_index_of_closest = nn_tree.query(np.asarray(landmarks['next_frame_landmark']), k = 1, return_distance = False)
+            print(nn_index_of_closest.shape)
+            print(np.asarray(landmarks['next_frame_landmark']).shape)
 
+    # plt.imshow(disparity,'gray')
+    # plt.show()
+    
+    
 cv2.destroyAllWindows()
     
