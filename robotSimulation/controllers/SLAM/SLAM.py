@@ -14,6 +14,30 @@ from matplotlib import pyplot as plt
 from scipy.spatial import distance    
 from sklearn.neighbors import KDTree 
 
+class Landmark:
+    id = 0
+    x = 0.0
+    y = 0.0
+    z = 0.0
+    
+    def __init__(self, id, x, y, z):
+        self.id = id
+        self.x = x
+        self.y = y
+        self.z = z
+        
+class LandmarkPair:
+    id = 0
+    landmark_1 = []
+    landmark_2 = []
+ 
+    
+    def __init__(self, id, landmark_1, landmark_2):
+        self.id = id
+        self.landmark_1 = landmark_1
+        self.landmark_2 = landmark_2
+
+
 robot = Robot()
 
 timestep = int(robot.getBasicTimeStep())
@@ -34,8 +58,12 @@ camera1.enable( 2 * timestep);
 
 # cv2.startWindowThread()
 # cv2.namedWindow("Frame")
+#TODO Need a list of official landmarks with number of times observed.
 landmarks = {'initial_landmark' : [],
             'next_frame_landmark' : []}
+            
+landmark_pairs = []
+
 count = 0;
 while robot.step(timestep) != -1:
   
@@ -91,19 +119,27 @@ while robot.step(timestep) != -1:
     if len(pts) > 0:
         if not(len(landmarks['initial_landmark']) > 0):
             for i in range(len(pts)):
-                landmarks['initial_landmark'].append(real_points[int(pts[i][1]),int(pts[i][0])])
+                current_landmark = real_points[int(pts[i][1]),int(pts[i][0])]
+                landmarks['initial_landmark'].append(Landmark(i,current_landmark[0], current_landmark[1], current_landmark[2]))
         else:
-            for i in range(len(pts)):
-                landmarks['next_frame_landmark'].append(real_points[int(pts[i][1]),int(pts[i][0])])
-            nn_tree = KDTree(np.asarray(landmarks['initial_landmark']))
+            num_features = len(landmarks['initial_landmark'])
+            landmarks_array = []
+            sift_features = []
+            for x in range(num_features):
+                lmrk = landmarks['initial_landmark'][x]
+                landmarks_array.append([lmrk.x, lmrk.y, lmrk.z])
             
-            nn_index_of_closest = nn_tree.query(np.asarray(landmarks['next_frame_landmark']), k = 1, return_distance = False)
-            print(nn_index_of_closest.shape)
-            print(np.asarray(landmarks['next_frame_landmark']).shape)
+            for i in range(len(pts)):
+                sift_features.append(real_points[int(pts[i][1]),int(pts[i][0])])
+        
+            nn_tree = KDTree(np.asarray(sift_features))
+           
+            nn_index_of_closest = nn_tree.query(np.asarray(landmarks_array), k = 1, return_distance = False)
+            for x in range(nn_index_of_closest.shape[0]):
+                
+                idx = nn_index_of_closest[x, 0]
+             
 
-    # plt.imshow(disparity,'gray')
-    # plt.show()
+                landmark_pairs.append(LandmarkPair(idx,sift_features[idx],landmarks_array[x]))  
     
-    
-cv2.destroyAllWindows()
     
