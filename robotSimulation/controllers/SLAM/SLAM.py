@@ -141,5 +141,9 @@ while robot.step(timestep) != -1:
              
 
                 landmark_pairs.append(LandmarkPair(idx,sift_features[idx],landmarks_array[x]))  
-    
-    
+
+
+            plt.scatter(sift_features)
+            plt.show()
+                
+  
